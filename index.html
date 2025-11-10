@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown Ulang Tahun 🎉</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  body {
+    font-family: "Poppins", sans-serif;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    
+    /* Background Settings */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    transition: background-image 1s ease-in-out;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  #countdown {
+    font-size: 3rem;
+    letter-spacing: 2px;
+    background: rgba(0, 64, 128, 0.4);
+    padding: 20px 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: 0.3s ease;
+  }
+
+  #countdown:hover {
+    transform: scale(1.05);
+  }
+
+  #message {
+    display: none;
+    font-size: 2rem;
+    color: #ffffff;
+    background: rgba(0,0,50,0.6);
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+    animation: fadeIn 2s ease forwards;
+  }
+
+  #popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.97);
+    color: #002b7f;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 300px;
+    animation: popUp 1s ease forwards;
+    z-index: 999;
+  }
+
+  #popup img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+  }
+
+  #popup button {
+    background: #004cff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  #popup button:hover {
+    background: #005aff;
+  }
+
+  #musicBtn {
+    margin-top: 20px;
+    background: rgba(255,255,255,0.8);
+    border: 2px solid #004cff;
+    color: #004cff;
+    border-radius: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s ease;
+  }
+
+  #musicBtn:hover {
+    background: #004cff;
+    color: #ffffff;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes popUp {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  /* Fade animation tiap ganti background */
+  .fade-bg {
+    animation: fadeBg 1s ease;
+  }
+
+  @keyframes fadeBg {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Cie Mau Ultah 🎂</h1>
+<div id="countdown"></div>
+<button id="musicBtn">🎵 Putar Musik</button>
+<div id="message">Doa terbaik di ulang tahunmu kali ini aii. Jadi lebih baik dan kurangin ngambeknya ya. I Love You💖</div>
+
+<!-- Popup Ucapan -->
+<div id="popup">
+  <img src="https://i.pinimg.com/originals/3a/35/56/3a3556a2d22137e63e7a7e7a72a7c246.gif" alt="Cake">
+  <h2>🎂 Happy Birthday!</h2>
+  <p>Selamat ulang tahun sayangkuuu.
+    I Love You💖</p>
+  <button onclick="closePopup()">Tutup</button>
+</div>
+
+<!-- Musik Ulang Tahun -->
+<audio id="bgMusic" loop>
+  <source src="musik/Lomba Sihir - Ribuan Memori (Official Lyric Video).mp3" type="audio/mp3">
+</audio>
+
+<!-- Confetti Script -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+  // ========== BACKGROUND SLIDESHOW ==========
+  const backgrounds = [
+    "img/IMG_20250805_132318 (1).jpg",
+    "img/IMG_20241022_155616 (1).jpg",
+    "img/IMG_20240817_164648 (1).jpg"
+  ];
+  let bgIndex = 0;
+
+  function changeBackground() {
+    document.body.classList.add('fade-bg');
+    document.body.style.backgroundImage = `url('${backgrounds[bgIndex]}')`;
+    bgIndex = (bgIndex + 1) % backgrounds.length;
+    setTimeout(() => document.body.classList.remove('fade-bg'), 1000);
+  }
+
+  changeBackground();
+  setInterval(changeBackground, 6000); // Ganti gambar tiap 6 detik
+
+  // ========== COUNTDOWN & EVENT ==========
+  var countDownDate = new Date("Nov 11, 2025 00:00:00").getTime();
+  var countdown = document.getElementById("countdown");
+  var message = document.getElementById("message");
+  var music = document.getElementById("bgMusic");
+  var musicBtn = document.getElementById("musicBtn");
+  var popup = document.getElementById("popup");
+  var musicPlaying = false;
+
+  // Tombol Musik
+  musicBtn.addEventListener("click", function() {
+    if (!musicPlaying) {
+      music.play();
+      musicPlaying = true;
+      musicBtn.innerText = "⏸️ Jeda Musik";
+    } else {
+      music.pause();
+      musicPlaying = false;
+      musicBtn.innerText = "🎵 Putar Musik";
+    }
+  });
+
+  // Countdown Timer
+  var x = setInterval(function() {
+    var now = new Date().getTime();
+    var distance = countDownDate - now;
+
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+    if (distance < 0) {
+      clearInterval(x);
+      countdown.style.display = "none";
+      message.style.display = "block";
+      showPopup();
+      startConfetti();
+      music.play();
+    }
+  }, 1000);
+
+  // Popup
+  function showPopup() {
+    popup.style.display = "block";
+  }
+
+  function closePopup() {
+    popup.style.display = "none";
+  }
+
+  // Confetti
+  function startConfetti() {
+    var duration = 5 * 1000;
+    var end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#00b3ff', '#ffffff', '#0077ff']
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#00b3ff', '#ffffff', '#0077ff']
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+</script>
+
+</body>
+</html>
